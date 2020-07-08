@@ -10,9 +10,10 @@ chrome://flags/#allow-insecure-localhost
 # Docker compose
 
 ```
+cd docker-compose
 make docker-compose
 ```
 
 # Helm
 
-https://github.com/opendistro-for-elasticsearch/opendistro-build
+cd helm
