@@ -56,3 +56,17 @@ Delete
 ```
 helm delete -n elasticsearch opendistro-es
 ```
+
+# Operation
+
+Storage resize
+
+https://kubernetes.io/blog/2018/07/12/resizing-persistent-volumes-using-kubernetes/
+
+```
+# Increase disk on GCP GUI (affect actual size limit)
+
+# Add visible size to GKE (does not affect actual size limit)
+kubectl edit pv pvc-73c1e667-c287-4b26-8715-65a02eea6455
+kubectl -n elasticsearch edit pvc data-opendistro-es-master-0
+```

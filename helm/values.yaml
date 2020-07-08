@@ -243,7 +243,7 @@ elasticsearch:
       storageClass: elasticsearch-storageclass
       accessModes:
         - ReadWriteOnce
-      size: 10Gi
+      size: 20Gi
       annotations: {}
 
     resources: {}
@@ -318,7 +318,7 @@ elasticsearch:
       storageClass: elasticsearch-storageclass
       accessModes:
         - ReadWriteOnce
-      size: 10Gi
+      size: 20Gi
       annotations: {}
 
     resources: {}
@@ -328,7 +328,7 @@ elasticsearch:
     #  requests:
     #    cpu: 200m
     #    memory: 1024Mi
-    javaOpts: "-Xms512m -Xmx512m"
+    javaOpts: "-Xms512m -Xmx4096m"
     podDisruptionBudget:
       enabled: false
       minAvailable: 1

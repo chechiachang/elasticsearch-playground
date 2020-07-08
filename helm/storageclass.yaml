@@ -5,6 +5,7 @@ metadata:
 provisioner: kubernetes.io/gce-pd
 parameters:
   type: pd-ssd
+allowVolumeExpansion: true
 allowedTopologies:
 - matchLabelExpressions:
   - key: failure-domain.beta.kubernetes.io/zone
