@@ -9,6 +9,23 @@ kubectl get nodes --selector cloud.google.com/gke-nodepool=elasticsearch
 kubectl taint nodes --selector cloud.google.com/gke-nodepool=elasticsearch purpose=elasticsearch:NoSchedule
 ```
 
+### Taint & affinity
+
+Node affinity
+```
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: cloud.google.com/gke-nodepool
+            operator: In
+            values:
+            - elasticsearch
+```
+
+TODO disallow master & worker on the same node
+
 Add tolerations to helm values.yaml
 ```
   tolerations:

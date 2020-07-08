@@ -111,7 +111,15 @@ kibana:
       value: "elasticsearch"
       effect: "NoSchedule"
 
-  affinity: {}
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: cloud.google.com/gke-nodepool
+            operator: In
+            values:
+            - elasticsearch
 
   serviceAccount:
     ## Specifies whether a ServiceAccount should be created
@@ -261,8 +269,16 @@ elasticsearch:
         operator: "Equal"
         value: "elasticsearch"
         effect: "NoSchedule"
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            - key: cloud.google.com/gke-nodepool
+              operator: In
+              values:
+              - elasticsearch
     ## Anti-affinity to disallow deploying client and master nodes on the same worker node
-    affinity: {}
     #  podAntiAffinity:
     #    requiredDuringSchedulingIgnoredDuringExecution:
     #      - topologyKey: "kubernetes.io/hostname"
@@ -328,8 +344,16 @@ elasticsearch:
         operator: "Equal"
         value: "elasticsearch"
         effect: "NoSchedule"
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            - key: cloud.google.com/gke-nodepool
+              operator: In
+              values:
+              - elasticsearch
     ## Anti-affinity to disallow deploying client and master nodes on the same worker node
-    affinity: {}
     #  podAntiAffinity:
     #    preferredDuringSchedulingIgnoredDuringExecution:
     #      - weight: 1
@@ -397,8 +421,16 @@ elasticsearch:
         operator: "Equal"
         value: "elasticsearch"
         effect: "NoSchedule"
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            - key: cloud.google.com/gke-nodepool
+              operator: In
+              values:
+              - elasticsearch
     ## Weighted anti-affinity to disallow deploying client node to the same worker node as master node
-    affinity: {}
     #  podAntiAffinity:
     #    preferredDuringSchedulingIgnoredDuringExecution:
     #      - weight: 1
