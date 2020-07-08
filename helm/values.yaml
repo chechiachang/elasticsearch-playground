@@ -24,7 +24,7 @@ kibana:
   externalPort: 443
   resources: {}
   #  limits:
-  #    cpu: 2500m
+  #    cpu: 2500m # Kibana init will consume 1+ cpu
   #    memory: 2Gi
   #  requests:
   #    cpu: 500m
@@ -67,14 +67,14 @@ kibana:
     labels: {}
     path: /
     hosts:
-      - chart-example.local
+      - chart.example.com
     tls: []
     #  - secretName: chart-example-tls
     #    hosts:
     #      - chart-example.local
 
   service:
-    type: ClusterIP
+    type: NodePort
     annotations: {}
 
   config: {}
@@ -321,14 +321,14 @@ elasticsearch:
       size: 20Gi
       annotations: {}
 
-    resources: {}
-    #  limits:
-    #    cpu: 1
-    #    memory: 1024Mi
-    #  requests:
-    #    cpu: 200m
-    #    memory: 1024Mi
-    javaOpts: "-Xms512m -Xmx4096m"
+    resources:
+      limits:
+        cpu: 1500m
+        memory: 2048Mi # Add memory to avoid OOMKilled. Xmx2048 consumes about ~2500Mi.
+      #requests:
+      #  cpu: 20m
+      #  memory: 2048Mi
+    javaOpts: "-Xms1536m -Xmx1536m" # [bootstrap check] initial heap size must equal to maximum heap size
     podDisruptionBudget:
       enabled: false
       minAvailable: 1
@@ -387,7 +387,7 @@ elasticsearch:
     javaOpts: "-Xms512m -Xmx512m"
     ingress:
       ## Set to true to enable ingress record generation
-      enabled: false
+      enabled: true
       annotations: {}
       #  kubernetes.io/ingress.class: nginx
       #  kubernetes.io/tls-acme: "true"

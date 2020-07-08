@@ -70,3 +70,7 @@ https://kubernetes.io/blog/2018/07/12/resizing-persistent-volumes-using-kubernet
 kubectl edit pv pvc-73c1e667-c287-4b26-8715-65a02eea6455
 kubectl -n elasticsearch edit pvc data-opendistro-es-master-0
 ```
+
+# Access
+
+NodePort: node-lb:32586/TCP
