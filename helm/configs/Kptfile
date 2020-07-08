@@ -1,0 +1,11 @@
+apiVersion: kpt.dev/v1alpha1
+kind: Kptfile
+metadata:
+    name: configs
+upstream:
+    type: git
+    git:
+        commit: 732cf69de136126d84b6bc29b685fd33ff96075c
+        repo: https://github.com/opendistro-for-elasticsearch/security
+        directory: /securityconfig
+        ref: v1.8.0.0
