@@ -35,19 +35,24 @@ Add tolerations to helm values.yaml
       effect: "NoSchedule"
 ```
 
-# Deploy
+# Install
 
-https://github.com/opendistro-for-elasticsearch/opendistro-build/tree/master/helm#elasticsearchyml-config
-
+Install
 ```
 git clone https://github.com/opendistro-for-elasticsearch/opendistro-build
-cd opendistro-build/helm/opendistro-es/
-helm package .
+helm package opendistro-build/helm/opendistro-es
 
-kubectl create namespace es
-helm install -n es --values=values.yaml opendistro-es opendistro-es-1.8.0.tgz
-
-kubectl port-forward -n es deployment/opendistro-es-kibana 5601
+kubectl create namespace elasticsearch
+kubectl apply -f storageclass.yaml
+helm install -n elasticsearch --values=values.yaml opendistro-es opendistro-es-1.8.0.tgz
 ```
 
-helm delete -n es opendistro-es
+Use
+```
+kubectl port-forward -n elasticsearch deployment/opendistro-es-kibana 5601
+```
+
+Delete
+```
+helm delete -n elasticsearch opendistro-es
+```
