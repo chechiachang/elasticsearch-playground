@@ -22,13 +22,13 @@ kibana:
   replicas: 1
   port: 5601
   externalPort: 443
-  resources: {}
-  #  limits:
-  #    cpu: 2500m # Kibana init will consume 1+ cpu
-  #    memory: 2Gi
-  #  requests:
-  #    cpu: 500m
-  #    memory: 512Mi
+  resources:
+    #limits:
+    #  cpu: 2500m # Kibana will consume 1+ cpu on init
+    #  memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 512Mi
   readinessProbe: []
   livenessProbe: []
 
@@ -119,7 +119,20 @@ kibana:
           - key: cloud.google.com/gke-nodepool
             operator: In
             values:
-            - elasticsearch
+              - elasticsearch
+    podAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+            - key: app
+              operator: In
+              values:
+              - opendistro-es
+            - key: role
+              operator: In
+              values:
+              - master
+          topologyKey: kubernetes.io/hostname
 
   serviceAccount:
     ## Specifies whether a ServiceAccount should be created
@@ -246,13 +259,13 @@ elasticsearch:
       size: 20Gi
       annotations: {}
 
-    resources: {}
+    resources:
     #  limits:
     #    cpu: 1
     #    memory: 1024Mi
-    #  requests:
-    #    cpu: 200m
-    #    memory: 1024Mi
+      requests:
+        cpu: 200m
+        memory: 1024Mi
     javaOpts: "-Xms512m -Xmx512m"
     podDisruptionBudget:
       enabled: false
@@ -278,18 +291,18 @@ elasticsearch:
               operator: In
               values:
               - elasticsearch
-    ## Anti-affinity to disallow deploying client and master nodes on the same worker node
-    #  podAntiAffinity:
-    #    requiredDuringSchedulingIgnoredDuringExecution:
-    #      - topologyKey: "kubernetes.io/hostname"
-    #        labelSelector:
-    #          matchLabels:
-    #            role: master
+    # Anti-affinity to disallow deploying client and master nodes on the same worker node
+      podAntiAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          - topologyKey: "kubernetes.io/hostname"
+            labelSelector:
+              matchLabels:
+                role: master
     podAnnotations: {}
 
   data:
     enabled: true
-    replicas: 1
+    replicas: 2
     updateStrategy: "RollingUpdate"
 
     ## Enable persistence using Persistent Volume Claims
@@ -324,11 +337,11 @@ elasticsearch:
     resources:
       limits:
         cpu: 1500m
-        memory: 2048Mi # Add memory to avoid OOMKilled. Xmx2048 consumes about ~2500Mi.
-      #requests:
-      #  cpu: 20m
-      #  memory: 2048Mi
-    javaOpts: "-Xms1536m -Xmx1536m" # [bootstrap check] initial heap size must equal to maximum heap size
+        memory: 6144Mi # Add memory to avoid OOMKilled. Xmx2048 consumes about ~2500Mi.
+      requests:
+        cpu: 20m
+        memory: 5120Mi
+    javaOpts: "-Xms4096m -Xmx4096m" # [bootstrap check] initial heap size must equal to maximum heap size
     podDisruptionBudget:
       enabled: false
       minAvailable: 1
@@ -353,15 +366,21 @@ elasticsearch:
               operator: In
               values:
               - elasticsearch
-    ## Anti-affinity to disallow deploying client and master nodes on the same worker node
-    #  podAntiAffinity:
-    #    preferredDuringSchedulingIgnoredDuringExecution:
-    #      - weight: 1
-    #        podAffinityTerm:
-    #          topologyKey: "kubernetes.io/hostname"
-    #          labelSelector:
-    #            matchLabels:
-    #              role: data
+    # Anti-affinity to disallow deploying client and master nodes on the same worker node
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            podAffinityTerm:
+              topologyKey: "kubernetes.io/hostname"
+              labelSelector:
+                matchLabels:
+                  role: data
+          - weight: 2
+            podAffinityTerm:
+              topologyKey: "kubernetes.io/hostname"
+              labelSelector:
+                matchLabels:
+                  role: master
     podAnnotations: {}
 
   client:
@@ -399,13 +418,13 @@ elasticsearch:
       #  - secretName: chart-example-tls
       #    hosts:
       #      - chart-example.local
-    resources: {}
-    #  limits:
-    #    cpu: 1
-    #    memory: 1024Mi
-    #  requests:
-    #    cpu: 200m
-    #    memory: 1024Mi
+    resources:
+      limits:
+        cpu: 1
+        memory: 1024Mi
+      requests:
+        cpu: 200m
+        memory: 1024Mi
     podDisruptionBudget:
       enabled: false
       minAvailable: 1
@@ -430,15 +449,28 @@ elasticsearch:
               operator: In
               values:
               - elasticsearch
-    ## Weighted anti-affinity to disallow deploying client node to the same worker node as master node
-    #  podAntiAffinity:
-    #    preferredDuringSchedulingIgnoredDuringExecution:
-    #      - weight: 1
-    #        podAffinityTerm:
-    #          topologyKey: "kubernetes.io/hostname"
-    #          labelSelector:
-    #            matchLabels:
-    #              role: client
+      podAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - opendistro-es
+              - key: role
+                operator: In
+                values:
+                - master
+            topologyKey: kubernetes.io/hostname
+    # Weighted anti-affinity to disallow deploying client node to the same worker node as master node
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            podAffinityTerm:
+              topologyKey: "kubernetes.io/hostname"
+              labelSelector:
+                matchLabels:
+                  role: client
     podAnnotations: {}
 
   config: {}

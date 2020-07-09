@@ -10,4 +10,6 @@ allowedTopologies:
 - matchLabelExpressions:
   - key: failure-domain.beta.kubernetes.io/zone
     values:
+    - asia-east1-a
+    - asia-east1-b
     - asia-east1-c
