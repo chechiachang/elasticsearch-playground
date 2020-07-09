@@ -74,3 +74,25 @@ kubectl -n elasticsearch edit pvc data-opendistro-es-master-0
 # Access
 
 NodePort: node-lb:32586/TCP
+
+---
+
+# Profiling
+
+```
+GET .kibana_92668751_admin/_search
+{
+  "profile": true,
+  "query" : {
+    "match" : { "message" : "some number" }
+  }
+}
+```
+
+# Benchmark
+
+https://github.com/elastic/rally
+```
+kubectl -n elasticsearch run -it --rm --restart=Never es-benchmark --image=python:3.8.3 --command sh
+pip3 install esrally
+```
