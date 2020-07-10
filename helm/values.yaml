@@ -19,16 +19,16 @@ kibana:
   ## Specifies the image pull policy. Can be "Always" or "IfNotPresent" or "Never".
   ## Default to "Always".
   imagePullPolicy: ""
-  replicas: 1
+  replicas: 2
   port: 5601
   externalPort: 443
   resources:
-    #limits:
-    #  cpu: 2500m # Kibana will consume 1+ cpu on init
-    #  memory: 2Gi
+    limits:
+      cpu: 1500m # Kibana will consume 1+ cpu on init
+      memory: 2Gi
     requests:
       cpu: 500m
-      memory: 512Mi
+      memory: 1024Mi
   readinessProbe: []
   livenessProbe: []
 
@@ -120,19 +120,13 @@ kibana:
             operator: In
             values:
               - elasticsearch
-    podAffinity:
+    # Anti-affinity to disallow deploying client and master nodes on the same worker node
+    podAntiAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
-        - labelSelector:
-            matchExpressions:
-            - key: app
-              operator: In
-              values:
-              - opendistro-es
-            - key: role
-              operator: In
-              values:
-              - master
-          topologyKey: kubernetes.io/hostname
+        - topologyKey: "kubernetes.io/hostname"
+          labelSelector:
+            matchLabels:
+              role: kibana
 
   serviceAccount:
     ## Specifies whether a ServiceAccount should be created
@@ -227,7 +221,7 @@ elasticsearch:
 
   master:
     enabled: true
-    replicas: 1
+    replicas: 3
     updateStrategy: "RollingUpdate"
 
     ## Enable persistence using Persistent Volume Claims
@@ -260,13 +254,13 @@ elasticsearch:
       annotations: {}
 
     resources:
-    #  limits:
-    #    cpu: 1
-    #    memory: 1024Mi
+      limits:
+        cpu: 1
+        memory: 2048Mi
       requests:
         cpu: 200m
-        memory: 1024Mi
-    javaOpts: "-Xms512m -Xmx512m"
+        memory: 1536Mi
+    javaOpts: "-Xms1024m -Xmx1024m"
     podDisruptionBudget:
       enabled: false
       minAvailable: 1
@@ -302,7 +296,7 @@ elasticsearch:
 
   data:
     enabled: true
-    replicas: 2
+    replicas: 3
     updateStrategy: "RollingUpdate"
 
     ## Enable persistence using Persistent Volume Claims
@@ -402,8 +396,7 @@ elasticsearch:
 
         # # Annotation to create internal only ELB
         # service.beta.kubernetes.io/aws-load-balancer-internal: 0.0.0.0/0
-    replicas: 1
-    javaOpts: "-Xms512m -Xmx512m"
+    replicas: 2
     ingress:
       ## Set to true to enable ingress record generation
       enabled: true
@@ -421,10 +414,11 @@ elasticsearch:
     resources:
       limits:
         cpu: 1
-        memory: 1024Mi
+        memory: 1536Mi
       requests:
         cpu: 200m
         memory: 1024Mi
+    javaOpts: "-Xms512m -Xmx512m"
     podDisruptionBudget:
       enabled: false
       minAvailable: 1
