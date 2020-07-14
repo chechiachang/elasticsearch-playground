@@ -59,7 +59,15 @@ helm delete -n elasticsearch opendistro-es
 
 # Operation
 
-Storage resize
+### Helm Upgrade
+
+NOTE: try to upgrade one component group at a time. ex. upgrade data-nodes, kibana, clients, then master. With sufficient replications in all component groups, there will be rolling update with zero downtime.
+
+```
+helm upgrade -n elasticsearch --values=values.yaml opendistro-es opendistro-es-1.8.0.tgz
+```
+
+### Storage resize
 
 https://kubernetes.io/blog/2018/07/12/resizing-persistent-volumes-using-kubernetes/
 

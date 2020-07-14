@@ -329,13 +329,15 @@ elasticsearch:
       annotations: {}
 
     resources:
-      limits:
-        cpu: 1500m
-        memory: 14336Mi # Add memory to avoid OOMKilled. Xmx2048 consumes about ~2500Mi.
+      #limits:
+      #  cpu: 1500m
+      #  memory: 10240Mi # Add memory to avoid OOMKilled. Xmx2048 consumes about ~2500Mi.
       requests:
         cpu: 20m
-        memory: 12288Mi
-    javaOpts: "-Xms10240m -Xmx10240m" # [bootstrap check] initial heap size must equal to maximum heap size
+        memory: 5120Mi
+    # https://www.elastic.co/guide/en/elasticsearch/reference/current/heap-size.html
+    # [bootstrap check] initial heap size must equal to maximum heap size
+    javaOpts: "-Xms4096m -Xmx4096m"
     podDisruptionBudget:
       enabled: false
       minAvailable: 1
