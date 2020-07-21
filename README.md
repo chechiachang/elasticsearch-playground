@@ -1,18 +1,8 @@
-Open Distro Elasticsearch
+elk stack
 ===
 
-# Docker compose
+# Provider
 
-```
-cd docker-compose
-make docker-compose
-```
-
-Insecure
-```
-chrome://flags/#allow-insecure-localhost
-```
-
-# Helm
-
-cd helm
+- elastic
+- open-distro
+- elastic-cloud
