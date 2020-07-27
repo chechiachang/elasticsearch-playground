@@ -1,4 +1,4 @@
-docker-compose/certs/*
+open-distro/docker-compose/certs/*
 
 helm/opendistro-build
 helm/opendistro-es-1.8.0.tgz
