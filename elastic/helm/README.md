@@ -15,8 +15,8 @@ kpt pkg get git@github.com:elastic/helm-charts.git@7.8.0 elastic
 
 Use tainted node
 ```
-kubectl get nodes --selector cloud.google.com/gke-nodepool=elasticsearch
-kubectl taint nodes --selector cloud.google.com/gke-nodepool=elasticsearch purpose=elasticsearch:NoSchedule
+kubectl get nodes --selector cloud.google.com/gke-nodepool=preemptible*
+kubectl taint nodes nodename preemptible=true:PreferNoSchedule
 ```
 
 # Install
@@ -32,7 +32,24 @@ helm install -n ${NAMESPACE} --values=elasticsearch-values.yaml --dry-run ${RELE
 helm install -n ${NAMESPACE} --values=elasticsearch-values.yaml ${RELEASE} elastic/elasticsearch
 ```
 
-Bitnami
+# Upgrade
+
+### Replace pods
+
+ex. update affinity / tolerations
+
+1. Make sure your service has
+  1. correct updateStrategy config
+  1. sufficient replicas
+1. Update elasticsearch-values.yaml
+1. `helm install -n ${NAMESPACE} --values=elasticsearch-values.yaml ${RELEASE} elastic/elasticsearch`
+1. Service update will operates with auto-scaling constrains (ex. max surge, max unavailable...)
+1. Monitoring high availability status if needed
+
+# Bitnami (Elastic Alternative) 
+
+without APM GUI support
+
 ```
 kubectl apply -f storageclass.yaml
 

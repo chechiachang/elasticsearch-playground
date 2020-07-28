@@ -91,7 +91,7 @@ extraInitContainers: ""
 #   command: ['echo', 'hey']
 
 updateStrategy:
-  type: "Recreate"
+  type: "RollingUpdate"
 
 service:
   type: ClusterIP
@@ -131,10 +131,10 @@ readinessProbe:
 imagePullSecrets: []
 nodeSelector: {}
 tolerations:
-  - key: "purpose"
+  - key: "preemptible"
     operator: "Equal"
-    value: "elasticsearch"
-    effect: "NoSchedule"
+    value: "true"
+    effect: "PreferNoSchedule"
 affinity:
   nodeAffinity:
     requiredDuringSchedulingIgnoredDuringExecution:
@@ -143,7 +143,7 @@ affinity:
         - key: cloud.google.com/gke-nodepool
           operator: In
           values:
-            - elasticsearch
+            - preemptible
   # Anti-affinity to disallow deploying client and master nodes on the same worker node
   podAntiAffinity:
     requiredDuringSchedulingIgnoredDuringExecution:

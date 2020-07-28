@@ -119,10 +119,10 @@ secretMounts: []
 terminationGracePeriod: 30
 
 tolerations:
-  - key: "purpose"
+  - key: "preemptible"
     operator: "Equal"
-    value: "elasticsearch"
-    effect: "NoSchedule"
+    value: "true"
+    effect: "PreferNoSchedule"
 
 nodeSelector: {}
 
@@ -134,7 +134,7 @@ affinity:
         - key: cloud.google.com/gke-nodepool
           operator: In
           values:
-            - elasticsearch
+            - preemptible
   # Anti-affinity to disallow deploying client and master nodes on the same worker node
   podAntiAffinity:
     requiredDuringSchedulingIgnoredDuringExecution:

@@ -160,7 +160,7 @@ nodeAffinity:
       - key: cloud.google.com/gke-nodepool
         operator: In
         values:
-          - elasticsearch
+          - preemptible
 
 # The default is to deploy all pods serially. By setting this to parallel all pods are started at
 # the same time when bootstrapping the cluster
@@ -186,7 +186,8 @@ service:
   loadBalancerIP: ""
   loadBalancerSourceRanges: []
 
-updateStrategy: RollingUpdate
+updateStrategy:
+  type: "RollingUpdate"
 
 # This is the max unavailable setting for the pod disruption budget
 # The default value of 1 will make sure that kubernetes won't allow more than 1
@@ -230,8 +231,12 @@ nodeSelector: {}
 tolerations:
   - key: "purpose"
     operator: "Equal"
-    value: "elasticsearch"
+    value: "elasticsearach"
     effect: "NoSchedule"
+  - key: "preemptible"
+    operator: "Equal"
+    value: "true"
+    effect: "PreferNoSchedule"
 
 # Enabling this will publically expose your Elasticsearch instance.
 # Only enable this if you have security enabled on your cluster
