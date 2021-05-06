@@ -1,0 +1,17 @@
+{
+  "size": 0,
+  "aggs": {
+    "samlple": {
+      "sampler": {
+        "shard_size": 1000
+      }
+    },
+    "aggs": {
+      "terms": {
+        "terms": {
+          "field": "kubernetes.node.name.keyword"
+        }
+      }
+    }
+  }
+}
